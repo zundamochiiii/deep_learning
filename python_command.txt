@@ -1,0 +1,65 @@
+pythonファイルの実行方法
+$ python .\filename.py
+
+//python
+*コメントアウト*
+#先頭に置くことでブロックコメントアウト、以降のコメントを実行時に無視する
+'''
+example : 囲った部分をコメントアウト（インデントがあっていないとエラーに）
+'''
+
+
+
+//OpenCV(参照はhttp://opencv.org/)
+
+*ライブラリのインポート*
+OpenCV pythonライブラリをインポートする必要がある。cvという（わかりやすい）名前を割り当てる。
+# import cv2 as cv
+  import sys
+
+*静止画の読み込み*
+cv::imread関数を読み込むことで最初の引数で指定されたファイルパスを使用して画像が読み込まれる。
+2番目の引数はオプションであり画像の形式を指定する。
+・IMREAD_COLORは画像をBGR8ビット形式でロード
+・IMREAD_UNCHANGEDは画像をそのままロード
+・IMREAD_GRAYSCALEはイメージを輝度イメージとしてロード
+画像を読み込むとデータはcv::Matオブジェクトに保存される
+# img = cv.imread(cv.samples.findFile("starry_night.jpg"))
+
+画像が正しくロードされたかどうかチェックする
+# if img is None:
+    sys.exit("Could not read the image.")
+
+*画像の表示*
+cv::imshow関数は読み込むことで画像の表示が可能。最初の引数はウィンドウのタイトルで２番目の引数は
+表示されるcv::Matオブジェクト。
+ユーザがキーを押すまでウィンドウを表示するため（でないと実行が早すぎる）cv::waitKey関数を使用する。
+この関数の唯一のパラメータはユーザ入力を待つ時間だけ(ミリ秒)ゼロは永遠に待つことを意味する。戻り値は
+押されたキー。
+# cv.imshow("Display window", img)
+  k = cv.waitKey(0)
+
+*イメージをファイルへ書き込む*
+cv::imwrite関数を読み込むことでイメージをファイルへ書き込むことが可能。（ファイルパスとcv::Matオブジェクトを
+引数として持つ）また、先ほどに続き押されたキーが〇のとき（サンプルでは"S"キー）と指定もできる。
+# if k == ord("s"):
+    cv.imwrite("starry_night.png", img)
+
+*以上を踏まえたサンプルコード*
+###################################################################################
+
+import cv2 as cv
+import sys
+
+img = cv.imread(cv.samples.findFile("starry_night.jpg"))
+
+if img is None:
+    sys.exit("Could not read the image.")
+
+cv.imshow("Display window", img)
+k = cv.waitKey(0)
+
+if k == ord("s"):
+    cv.imwrite("starry_night.png", img)
+
+###################################################################################
