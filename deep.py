@@ -1,11 +1,15 @@
 import cv2
 import numpy as np
+import sys
 
 h = 1280
 w = 720
 
 ##イメージの読み込み
 img = cv2.imread('G:/pictures/test.png')
+if img is None:
+    sys.exit("Could not read the image.")
+
 img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 img_HSV = cv2.GaussianBlur(img_HSV, (9, 9), 3)
 
@@ -33,16 +37,19 @@ for i in range(0, len(contours)):
     if len(contours[i]) > 0:
 
         # remove small objects
-        if cv2.contourArea(contours[i]) < 500:
+        if cv2.contourArea(contours[i]) < 800:
             continue
 
         rect = contours[i]
         x, y, w, h = cv2.boundingRect(rect)
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 0), 10)
 
+        img_rct = img
+        img_rct = img[y : (y + h) , x : (x + w)]
+        cv2.imwrite('rectangle_'+str(i)+'.png', img_rct)
+
 # save
 img = cv2.resize(img,(h,w))
-
 cv2.imwrite('boundingbox.jpg', img)
 
 img_msk = cv2.imread('mask.png')
@@ -59,18 +66,3 @@ cv2.imwrite('masked.png', img_dst)
 cv2.namedWindow('img')
 cv2.imshow('img', img_dst)
 k = cv2.waitKey(0)
-
-'''
-grayed = cv2.cvtColor(img_dst, cv2.COLOR_BGR2GRAY)
-# 輪郭抽出
-    contours, hierarchy = cv2.findContours(th1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    areas = []
-    for cnt in contours:
-        area = cv2.contourArea(cnt)
-        if area > 10000:
-            epsilon = 0.1*cv2.arcLength(cnt,True)
-            approx = cv2.approxPolyDP(cnt,epsilon,True)
-            areas.append(approx)
-    #cv2.drawContours(img, areas, -1, (0,255,0), 3)
-    cv2.imwrite(now + '_3_' + file_name + '_boundingbox_B.jpg', img)
-'''
